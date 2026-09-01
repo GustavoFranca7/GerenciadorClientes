@@ -147,6 +147,108 @@ namespace GerenciadorClientes
 
             PausarERetornar();
         }
+        public void EditarDadosCliente(Cliente clienteAtual)
+        {
+            Console.Clear();
+            Console.WriteLine($"--- EDITANDO CLIENTE ID: {clienteAtual.Id} ---");
+            Console.WriteLine("Dica: Pressione ENTER sem digitar nada para manter o valor atual.\n");
+
+            // 1. Nome
+            Console.WriteLine($"Nome Atual: {clienteAtual.Nome}");
+            Console.Write("Novo Nome: ");
+            string novoNome = Console.ReadLine()?.Trim();
+            if (!string.IsNullOrEmpty(novoNome))
+            {
+                clienteAtual.Nome = novoNome;
+            }
+
+            // 2. CPF (Com opção de manter)
+            Console.WriteLine($"\nCPF Atual: {clienteAtual.Cpf}");
+            Console.Write("Novo CPF: ");
+            string novoCpf = Console.ReadLine()?.Trim();
+            if (!string.IsNullOrEmpty(novoCpf))
+            {
+                clienteAtual.Cpf = novoCpf;
+            }
+
+            // 3. E-mail
+            Console.WriteLine($"\nE-mail Atual: {clienteAtual.Email}");
+            Console.Write("Novo E-mail: ");
+            string novoEmail = Console.ReadLine()?.Trim();
+            if (!string.IsNullOrEmpty(novoEmail))
+            {
+                clienteAtual.Email = novoEmail;
+            }
+
+            // 4. Telefone
+            Console.WriteLine($"\nTelefone Atual: {clienteAtual.Telefone}");
+            Console.Write("Novo Telefone: ");
+            string novoTelefone = Console.ReadLine()?.Trim();
+            if (!string.IsNullOrEmpty(novoTelefone))
+            {
+                clienteAtual.Telefone = novoTelefone;
+            }
+
+            // Persiste no banco de dados via DAO
+            bool sucesso = _clienteDao.Atualizar(clienteAtual);
+
+            if (sucesso)
+            {
+                Console.WriteLine("\n[SUCESSO] Dados do cliente atualizados com sucesso!");
+            }
+            else
+            {
+                Console.WriteLine("\n[ERRO] Não foi possível atualizar os dados do cliente.");
+            }
+        }
+        public void MenuEditar()
+        {
+            Console.Clear();
+            Console.WriteLine("--- ATUALIZAÇÃO DE REGISTROS ---\n");
+            Console.Write("Digite o ID do cliente que deseja editar: ");
+
+            if (int.TryParse(Console.ReadLine(), out int idCliente))
+            {
+                Cliente cliente = _clienteDao.BuscarPorId(idCliente);
+
+                if (cliente == null)
+                {
+                    Console.WriteLine($"\n[AVISO] Cliente com ID {idCliente} não foi encontrado.");
+                    PausarERetornar();
+                    return;
+                }
+
+                Console.WriteLine($"\nCliente selecionado: {cliente.Nome}");
+                Console.WriteLine("1 - Editar Dados Pessoais (Nome, CPF, Email, Telefone)");
+                Console.WriteLine("2 - Editar Endereço");
+                Console.WriteLine("0 - Voltar");
+                Console.Write("Escolha uma opção: ");
+
+                string opcao = Console.ReadLine()?.Trim();
+
+                switch (opcao)
+                {
+                    case "1":
+                        EditarDadosCliente(cliente);
+                        break;
+                    /*case "2":
+                        // Chamaremos o fluxo de edição da EnderecoView
+                        _enderecoView.EditarEnderecoDoCliente(idCliente);
+                        break;*/
+                    case "0":
+                        return;
+                    default:
+                        Console.WriteLine("\n[ERRO] Opção inválida!");
+                        break;
+                }
+            }
+            else
+            {
+                Console.WriteLine("\n[ERRO] Digite um ID numérico válido.");
+            }
+
+            PausarERetornar();
+        }
 
         // Método auxiliar: PausarERetornar
         // Descrição: Exibe uma mensagem e aguarda o usuário pressionar uma tecla.

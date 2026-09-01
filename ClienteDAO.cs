@@ -142,5 +142,63 @@ namespace GerenciadorClientes
                 }
             }
         }
+        public bool Atualizar(Cliente cliente)
+        {
+            string query = @"UPDATE CLIENTES 
+                    SET NOME = :nome, 
+                        CPF = :cpf,
+                        EMAIL = :email, 
+                        TELEFONE = :telefone 
+                    WHERE ID = :id";
+
+            using (OracleConnection conexao = Database.GetConnection())
+            {
+                conexao.Open();
+                using (OracleCommand cmd = new OracleCommand(query, conexao))
+                {
+                    cmd.Parameters.Add(new OracleParameter("nome", cliente.Nome));
+                    cmd.Parameters.Add(new OracleParameter("cpf", cliente.Cpf));
+                    cmd.Parameters.Add(new OracleParameter("email", cliente.Email));
+                    cmd.Parameters.Add(new OracleParameter("telefone", cliente.Telefone));
+                    cmd.Parameters.Add(new OracleParameter("id", cliente.Id));
+
+                    int linhasAfetadas = cmd.ExecuteNonQuery();
+                    return linhasAfetadas > 0;
+                }
+            }
+        }
+        public Cliente BuscarPorId(int id)
+        {
+            string query = @"SELECT ID, NOME, CPF, EMAIL, TELEFONE, DATA_CADASTRO 
+                    FROM CLIENTES 
+                    WHERE ID = :id";
+
+            using (OracleConnection conexao = Database.GetConnection())
+            {
+                conexao.Open();
+                using (OracleCommand cmd = new OracleCommand(query, conexao))
+                {
+                    cmd.Parameters.Add(new OracleParameter("id", id));
+
+                    using (OracleDataReader reader = cmd.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            return new Cliente
+                            {
+                                Id = reader.GetInt32(0),
+                                Nome = reader.GetString(1),
+                                Cpf = reader.GetString(2),
+                                Email = reader.GetString(3),
+                                Telefone = reader.IsDBNull(4) ? "Não informado" : reader.GetString(4),
+                                DataCadastro = reader.GetDateTime(5)
+                            };
+                        }
+                    }
+                }
+            }
+
+            return null; // Retorna null se o ID não existir no banco
+        }
     }
 }
