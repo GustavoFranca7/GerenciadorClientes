@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace GerenciadorClientes
 {
@@ -231,10 +232,10 @@ namespace GerenciadorClientes
                     case "1":
                         EditarDadosCliente(cliente);
                         break;
-                    /*case "2":
+                    case "2":
                         // Chamaremos o fluxo de edição da EnderecoView
                         _enderecoView.EditarEnderecoDoCliente(idCliente);
-                        break;*/
+                        break;
                     case "0":
                         return;
                     default:
@@ -245,6 +246,89 @@ namespace GerenciadorClientes
             else
             {
                 Console.WriteLine("\n[ERRO] Digite um ID numérico válido.");
+            }
+
+            PausarERetornar();
+        }
+
+        // Método: ExecutarExcluirCliente
+        // Descrição: Executa o fluxo de exclusão de um cliente via console.
+        // Antes de apagar, exibe os dados encontrados e pede confirmação explícita,
+        // já que a exclusão é uma operação irreversível.
+        public void ExecutarExcluirCliente()
+        {
+            Console.Clear();
+            Console.WriteLine("--- EXCLUSÃO DE CLIENTE ---\n");
+            Console.Write("Digite o ID do cliente que deseja excluir: ");
+
+            // Validação de entrada: o ID precisa ser um número inteiro
+            if (!int.TryParse(Console.ReadLine(), out int idCliente))
+            {
+                Console.WriteLine("\n[ERRO] Digite um ID numérico válido.");
+                PausarERetornar();
+                return;
+            }
+
+            // Busca o cliente para confirmar que ele existe antes de qualquer exclusão
+            Cliente cliente = _clienteDao.BuscarPorId(idCliente);
+
+            if (cliente == null)
+            {
+                Console.WriteLine($"\n[AVISO] Cliente com ID {idCliente} não foi encontrado.");
+                PausarERetornar();
+                return;
+            }
+
+            // Exibe os dados do cliente para o usuário conferir o que será apagado
+            Console.WriteLine("\n--- DADOS QUE SERÃO EXCLUÍDOS ---");
+            Console.WriteLine($"ID:       {cliente.Id}");
+            Console.WriteLine($"Nome:     {cliente.Nome}");
+            Console.WriteLine($"CPF:      {cliente.Cpf}");
+            Console.WriteLine($"E-mail:   {cliente.Email}");
+            Console.WriteLine($"Telefone: {cliente.Telefone}");
+
+            // Busca o endereço para avisar que ele também será removido junto
+            Endereco endereco = _enderecoDao.BuscarPorClienteId(idCliente);
+
+            if (endereco != null)
+            {
+                Console.WriteLine($"Endereço: {endereco.Logradouro}, {endereco.Numero} - " +
+                                  $"{endereco.Cidade}/{endereco.Estado} - CEP: {endereco.Cep}");
+                Console.WriteLine("\n[ATENÇÃO] O endereço acima também será excluído.");
+            }
+            else
+            {
+                Console.WriteLine("Endereço: (nenhum endereço cadastrado)");
+            }
+
+            // Confirmação obrigatória: qualquer resposta diferente de "S" cancela
+            Console.Write("\nConfirma a exclusão? Esta ação NÃO pode ser desfeita. (S/N): ");
+            string confirmacao = Console.ReadLine()?.Trim().ToUpper();
+
+            if (confirmacao != "S")
+            {
+                Console.WriteLine("\n[CANCELADO] Nenhum registro foi excluído.");
+                PausarERetornar();
+                return;
+            }
+
+            try
+            {
+                // Delega a exclusão ao DAO, que executa tudo dentro de uma transação
+                bool excluido = _clienteDao.ExcluirComEndereco(idCliente);
+
+                if (excluido)
+                {
+                    Console.WriteLine($"\n[SUCESSO] Cliente ID {idCliente} excluído do Oracle!");
+                }
+                else
+                {
+                    Console.WriteLine("\n[ERRO] Não foi possível excluir o cliente.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"\n[ERRO] Falha ao excluir: {ex.Message}");
             }
 
             PausarERetornar();

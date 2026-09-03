@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Oracle.ManagedDataAccess.Client;
+using System;
 using System.Collections.Generic;
-using Oracle.ManagedDataAccess.Client;
+using System.Text;
+
 
 namespace GerenciadorClientes
 {
@@ -14,7 +16,7 @@ namespace GerenciadorClientes
             // Query serve para inserir um novo registro na tabela CLIENTES, utilizando parâmetros nomeados  
             string query = @"INSERT INTO CLIENTES (ID, NOME, CPF, EMAIL, TELEFONE) 
                             VALUES (SEQ_CLIENTES.NEXTVAL, :nome, :cpf, :email, :telefone)";
-
+            
             // Abre uma conexão com o banco utilizando a fábrica Database.GetConnection()
             using (OracleConnection conexao = Database.GetConnection())
             {
@@ -118,6 +120,7 @@ namespace GerenciadorClientes
                         // 2. Inserir Endereço usando o idClienteGerado
                         using (OracleCommand cmdEndereco = new OracleCommand(sqlEndereco, conexao))
                         {
+                   
                             cmdEndereco.Transaction = transacao;
                             cmdEndereco.Parameters.Add(new OracleParameter("clienteId", idClienteGerado));
                             cmdEndereco.Parameters.Add(new OracleParameter("logradouro", cliente.Endereco.Logradouro));
@@ -199,6 +202,73 @@ namespace GerenciadorClientes
             }
 
             return null; // Retorna null se o ID não existir no banco
+        }
+
+        // Exclui um cliente e o endereço vinculado a ele de forma atômica.
+        // A ordem das exclusões importa: o endereço (tabela filha) precisa sair
+        // ANTES do cliente (tabela pai), senão a constraint FK_ENDERECO_CLIENTE
+        // bloqueia a operação com o erro ORA-02292.
+        public bool ExcluirComEndereco(int id)
+        {
+            // Apaga todos os endereços que pertencem ao cliente informado
+            string sqlEndereco = "DELETE FROM ENDERECOS WHERE CLIENTE_ID = :clienteId";
+
+            // Apaga o cliente propriamente dito
+            string sqlCliente = "DELETE FROM CLIENTES WHERE ID = :id";
+
+            using (OracleConnection conexao = Database.GetConnection())
+            {
+                conexao.Open();
+
+                // Abre a transação: nada é gravado no banco até o Commit
+                using (OracleTransaction transacao = conexao.BeginTransaction())
+                {
+                    try
+                    {
+                        // 1. Excluir o(s) endereço(s) do cliente
+                        using (OracleCommand cmdEndereco = new OracleCommand(sqlEndereco, conexao))
+                        {
+                            // Amarra o comando à transação aberta acima
+                            cmdEndereco.Transaction = transacao;
+                            cmdEndereco.Parameters.Add(new OracleParameter("clienteId", id));
+
+                            // Não validamos o retorno aqui: um cliente sem endereço
+                            // cadastrado é uma situação válida (zero linhas afetadas)
+                            cmdEndereco.ExecuteNonQuery();
+                        }
+
+                        // 2. Excluir o cliente
+                        int linhasAfetadas;
+                        using (OracleCommand cmdCliente = new OracleCommand(sqlCliente, conexao))
+                        {
+                            cmdCliente.Transaction = transacao;
+                            cmdCliente.Parameters.Add(new OracleParameter("id", id));
+
+                            // Aqui sim o retorno importa: indica se o cliente existia
+                            linhasAfetadas = cmdCliente.ExecuteNonQuery();
+                        }
+
+                        // Se nenhum cliente foi removido, o ID não existia no banco.
+                        // Desfaz a exclusão dos endereços para não deixar lixo no banco.
+                        if (linhasAfetadas == 0)
+                        {
+                            transacao.Rollback();
+                            return false;
+                        }
+
+                        // Confirma as duas exclusões de uma só vez
+                        transacao.Commit();
+                        return true;
+                    }
+                    catch (Exception)
+                    {
+                        // Qualquer falha no meio do caminho desfaz TUDO,
+                        // devolvendo o banco ao estado anterior ao BeginTransaction
+                        transacao.Rollback();
+                        throw;
+                    }
+                }
+            }
         }
     }
 }

@@ -26,3 +26,7 @@ CREATE TABLE ENDERECOS (
 
 -- Sequence para autoincrementar o ID do Endereço
 CREATE SEQUENCE SEQ_ENDERECOS START WITH 1 INCREMENT BY 1;
+
+-- Índice na coluna de chave estrangeira: evita bloqueio de tabela                                                 
+-- no DELETE do cliente e agiliza as buscas de endereço por cliente                                               
+CREATE INDEX IDX_ENDERECOS_CLIENTE_ID ON ENDERECOS(CLIENTE_ID);  

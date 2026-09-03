@@ -1,5 +1,7 @@
-﻿using System;
-using Oracle.ManagedDataAccess.Client;
+﻿using Oracle.ManagedDataAccess.Client;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace GerenciadorClientes
 {
@@ -39,5 +41,34 @@ namespace GerenciadorClientes
 
             return null; // Retorna null caso o cliente não tenha endereço cadastrado
         }
+
+        public bool Atualizar(Endereco endereco)
+        {
+            string query = @"UPDATE ENDERECOS 
+                    SET LOGRADOURO = :logradouro, 
+                        NUMERO = :numero,                       
+                        CIDADE = :cidade, 
+                        ESTADO = :estado, 
+                        CEP = :cep 
+                    WHERE ID = :id";
+
+            using (OracleConnection conexao = Database.GetConnection())
+            {
+                conexao.Open();
+                using (OracleCommand cmd = new OracleCommand(query, conexao))
+                {
+                    cmd.Parameters.Add(new OracleParameter("logradouro", endereco.Logradouro));
+                    cmd.Parameters.Add(new OracleParameter("numero", endereco.Numero));
+                    cmd.Parameters.Add(new OracleParameter("cidade", endereco.Cidade));
+                    cmd.Parameters.Add(new OracleParameter("estado", endereco.Estado));
+                    cmd.Parameters.Add(new OracleParameter("cep", endereco.Cep));
+                    cmd.Parameters.Add(new OracleParameter("id", endereco.Id));
+
+                    int linhasAfetadas = cmd.ExecuteNonQuery();
+                    return linhasAfetadas > 0;
+                }
+            }
+        }
     }
+
 }
