@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace GerenciadorClientes
+// Camada Core / Models: entidades que representam as tabelas do banco.
+namespace GerenciadorClientes.Core.Models
 {
     public class Endereco
     {

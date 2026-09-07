@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- Sem a tag <OutputType>, o SDK gera uma Class Library (.dll) em vez de
+         um executavel. Esta camada nao roda sozinha: ela existe para ser
+         consumida por outros projetos (o ConsoleApp hoje, o Avalonia no futuro). -->
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- O driver do Oracle fica aqui, e nao na camada de apresentacao,
+         porque e a Core quem conversa com o banco de dados. -->
+    <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="23.26.300" />
+  </ItemGroup>
+
+</Project>

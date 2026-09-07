@@ -1,9 +1,11 @@
-﻿using Oracle.ManagedDataAccess.Client;
+﻿using GerenciadorClientes.Core.Models; // Entidade Endereco
+using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace GerenciadorClientes
+// Camada Core / Data: tudo que conversa diretamente com o Oracle.
+namespace GerenciadorClientes.Core.Data
 {
     public class EnderecoDAO
     {

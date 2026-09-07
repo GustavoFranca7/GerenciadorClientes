@@ -1,10 +1,12 @@
-﻿using Oracle.ManagedDataAccess.Client;
+﻿using GerenciadorClientes.Core.Models; // Entidades Cliente e Endereco
+using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 
-namespace GerenciadorClientes
+// Camada Core / Data: tudo que conversa diretamente com o Oracle.
+namespace GerenciadorClientes.Core.Data
 {
     // Classe responsável por realizar operações de persistência de dados (CRUD) para a entidade Cliente utilizando o Oracle.
     public class ClienteDAO

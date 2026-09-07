@@ -1,6 +1,9 @@
-﻿using System;
+﻿using GerenciadorClientes.Core.Data;   // EnderecoDAO
+using GerenciadorClientes.Core.Models; // Entidade Endereco
+using System;
 
-namespace GerenciadorClientes
+// Camada de apresentacao: telas do terminal.
+namespace GerenciadorClientes.ConsoleApp.Views
 {
     public class EnderecoView
     {

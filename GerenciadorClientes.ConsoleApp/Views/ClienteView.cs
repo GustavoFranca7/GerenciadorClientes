@@ -1,8 +1,11 @@
-﻿using System;
+﻿using GerenciadorClientes.Core.Data;   // ClienteDAO e EnderecoDAO
+using GerenciadorClientes.Core.Models; // Entidades Cliente e Endereco
+using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace GerenciadorClientes
+// Camada de apresentacao: telas do terminal.
+namespace GerenciadorClientes.ConsoleApp.Views
 {
     // Classe responsável pela interface de console para operações relacionadas a Cliente.
     // Contém métodos para exibir a lista de clientes e cadastrar um novo cliente,

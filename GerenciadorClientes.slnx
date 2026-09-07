@@ -1,3 +1,4 @@
 <Solution>
-  <Project Path="GerenciadorClientes/GerenciadorClientes.csproj" />
+  <Project Path="GerenciadorClientes.Core/GerenciadorClientes.Core.csproj" />
+  <Project Path="GerenciadorClientes.ConsoleApp/GerenciadorClientes.ConsoleApp.csproj" />
 </Solution>
