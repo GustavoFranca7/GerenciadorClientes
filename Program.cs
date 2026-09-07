@@ -30,16 +30,16 @@ class Program
             switch (opcao)
             {
                 case "1":
-                    _clienteView.ExibirListaClientes();
+                    _clienteView.ExibirListaClientes(); // Chamada de exibição de clientes com pergunta para exibir endereço.
                     break;
                 case "2":
-                    _clienteView.ExecutarCadastrarCliente();
+                    _clienteView.ExecutarCadastrarCliente(); // Chamada de cadastro de clientes com endereços.
                     break;
                 case "3":
-                    _clienteView.MenuEditar(); // Chamada do novo menu de edição
+                    _clienteView.MenuEditar(); // Chamada do menu de edição.
                     break;
                 case "4":
-                    _clienteView.ExecutarExcluirCliente(); // Fluxo de exclusão (Delete do CRUD)
+                    _clienteView.ExecutarExcluirCliente(); // Chamada de exclusão.
                     break;
                 case "0":
                     executar = false;
