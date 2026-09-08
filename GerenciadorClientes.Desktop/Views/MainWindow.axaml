@@ -1,0 +1,46 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:GerenciadorClientes.Desktop.ViewModels"
+        xmlns:models="using:GerenciadorClientes.Core.Models"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="500"
+        x:Class="GerenciadorClientes.Desktop.Views.MainWindow"
+        x:DataType="vm:MainViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Width="900" Height="500"
+        Title="Gerenciador de Clientes">
+
+    <Design.DataContext>
+        <!-- Serve apenas ao preview da IDE; o DataContext real vem do App.axaml.cs -->
+        <vm:MainViewModel />
+    </Design.DataContext>
+
+    <DockPanel Margin="16">
+
+        <!-- Cabecalho -->
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="12" Margin="0,0,0,12">
+            <TextBlock Text="Clientes" FontSize="22" FontWeight="SemiBold" VerticalAlignment="Center" />
+            <Button Content="Atualizar" Command="{Binding CarregarClientesCommand}" />
+        </StackPanel>
+
+        <!-- Rodape com o resultado da ultima carga -->
+        <TextBlock DockPanel.Dock="Bottom" Text="{Binding Status}" Margin="0,12,0,0" Opacity="0.7" />
+
+        <!-- Cada linha e um Cliente vindo da Core -->
+        <DataGrid ItemsSource="{Binding Clientes}"
+                  IsReadOnly="True"
+                  AutoGenerateColumns="False"
+                  GridLinesVisibility="Horizontal">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="ID"       Width="60"  Binding="{Binding Id}" />
+                <DataGridTextColumn Header="Nome"     Width="*"   Binding="{Binding Nome}" />
+                <DataGridTextColumn Header="CPF"      Width="130" Binding="{Binding Cpf}" />
+                <DataGridTextColumn Header="E-mail"   Width="*"   Binding="{Binding Email}" />
+                <DataGridTextColumn Header="Telefone" Width="130" Binding="{Binding Telefone}" />
+                <DataGridTextColumn Header="Cadastro" Width="110" Binding="{Binding DataCadastro, StringFormat={}{0:dd/MM/yyyy}}" />
+            </DataGrid.Columns>
+        </DataGrid>
+
+    </DockPanel>
+</Window>
