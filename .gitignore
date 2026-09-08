@@ -480,3 +480,6 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+
+# Configuracao local com credenciais reais - nunca versionar
+appsettings.json

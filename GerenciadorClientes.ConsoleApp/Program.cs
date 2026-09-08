@@ -1,4 +1,4 @@
-using GerenciadorClientes.ConsoleApp.Views; // Telas do terminal
+﻿using GerenciadorClientes.ConsoleApp.Views; // Telas do terminal
 using System;
 using System.Collections.Generic;
 using System.Text;

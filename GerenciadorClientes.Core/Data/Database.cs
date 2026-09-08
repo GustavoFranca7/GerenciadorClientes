@@ -1,17 +1,28 @@
-﻿using Oracle.ManagedDataAccess.Client;
+using Microsoft.Extensions.Configuration;
+using Oracle.ManagedDataAccess.Client;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 // Camada Core / Data: tudo que conversa diretamente com o Oracle.
 namespace GerenciadorClientes.Core.Data
 {
     public static class Database
     {
-        // Classe estática para gerenciar a conexão com o banco de dados Oracle.
-        // Propriedade para armazenar a string de conexão (privada para proteção)
+        // Configuração lida de fora do código, para a senha não ir para o Git.
+        // Cada fonte sobrescreve a anterior: arquivo -> cofre local -> ambiente.
+        private static readonly IConfiguration _configuracao = new ConfigurationBuilder()
+            .SetBasePath(AppContext.BaseDirectory)
+            .AddJsonFile("appsettings.json", optional: true)
+            .AddUserSecrets(typeof(Database).Assembly, optional: true)
+            .AddEnvironmentVariables()
+            .Build();
+
+        // Falha imediatamente se nada foi configurado, indicando o que fazer.
         private static string ConnectionString =>
-            "User Id=PROJETO_CLIENTES;Password=123456;Data Source=localhost:1521/XEPDB1;";
+            _configuracao.GetConnectionString("Oracle")
+            ?? throw new InvalidOperationException(
+                "A connection string 'Oracle' não foi configurada.\n" +
+                "Na pasta do projeto GerenciadorClientes.Core, execute:\n" +
+                "  dotnet user-secrets set \"ConnectionStrings:Oracle\" \"User Id=...;Password=...;Data Source=localhost:1521/XEPDB1;\"");
 
         // Método que retorna uma nova conexão pronta para uso
         public static OracleConnection GetConnection()

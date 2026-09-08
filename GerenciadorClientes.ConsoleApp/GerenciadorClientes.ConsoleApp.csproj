@@ -15,4 +15,11 @@
     <ProjectReference Include="..\GerenciadorClientes.Core\GerenciadorClientes.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- Se existir um appsettings.json local, copia para a pasta bin junto com
+         o executavel, que e onde o Database.cs procura por ele. O arquivo esta
+         no .gitignore: guarda credenciais reais e nunca vai para o repositorio. -->
+    <Content Include="appsettings.json" Condition="Exists('appsettings.json')" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>
