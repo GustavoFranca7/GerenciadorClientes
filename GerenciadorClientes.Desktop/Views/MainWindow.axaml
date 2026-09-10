@@ -4,43 +4,150 @@
         xmlns:models="using:GerenciadorClientes.Core.Models"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="500"
+        mc:Ignorable="d" d:DesignWidth="1280" d:DesignHeight="800"
         x:Class="GerenciadorClientes.Desktop.Views.MainWindow"
         x:DataType="vm:MainViewModel"
         Icon="/Assets/avalonia-logo.ico"
-        Width="900" Height="500"
+        Width="1280" Height="800" MinWidth="1000" MinHeight="600"
+        FontFamily="{StaticResource FontePixel}"
+        FontSize="16"
+        Background="{StaticResource FundoJanela}"
         Title="Gerenciador de Clientes">
 
     <Design.DataContext>
-        <!-- Serve apenas ao preview da IDE; o DataContext real vem do App.axaml.cs -->
         <vm:MainViewModel />
     </Design.DataContext>
 
-    <DockPanel Margin="16">
+    <Grid ColumnDefinitions="130,8,*" Margin="8">
 
-        <!-- Cabecalho -->
-        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="12" Margin="0,0,0,12">
-            <TextBlock Text="Clientes" FontSize="22" FontWeight="SemiBold" VerticalAlignment="Center" />
-            <Button Content="Atualizar" Command="{Binding CarregarClientesCommand}" />
-        </StackPanel>
+        <!-- ===================== MENU LATERAL ===================== -->
+        <Border Grid.Column="0" Background="{StaticResource Menu}"
+                BorderBrush="{StaticResource Contorno}" BorderThickness="3">
+            <DockPanel Margin="0,14">
+                <TextBlock DockPanel.Dock="Bottom" Text="V1.1 · OK"
+                           Foreground="{StaticResource MenuFraco}"
+                           HorizontalAlignment="Center" Margin="0,10,0,0" />
+                <StackPanel Spacing="6">
+                    <!-- Provisorio: blocos coloridos no lugar dos icones,
+                         ate a arte de 64x64 ficar pronta. -->
+                    <StackPanel Background="{StaticResource Selecao}">
+                        <Border Width="64" Height="64" Margin="0,8,0,4"
+                                Background="{StaticResource Verde}"
+                                BorderBrush="{StaticResource Contorno}" BorderThickness="3" />
+                        <TextBlock Text="CLIENTES" Foreground="{StaticResource MenuTexto}"
+                                   HorizontalAlignment="Center" Margin="0,0,0,8" />
+                    </StackPanel>
+                    <StackPanel>
+                        <Border Width="64" Height="64" Margin="0,8,0,4"
+                                Background="#876E52"
+                                BorderBrush="{StaticResource Contorno}" BorderThickness="3" />
+                        <TextBlock Text="RELATORIOS" Foreground="{StaticResource MenuTexto}"
+                                   HorizontalAlignment="Center" Margin="0,0,0,8" />
+                    </StackPanel>
+                </StackPanel>
+            </DockPanel>
+        </Border>
 
-        <!-- Rodape com o resultado da ultima carga -->
-        <TextBlock DockPanel.Dock="Bottom" Text="{Binding Status}" Margin="0,12,0,0" Opacity="0.7" />
+        <!-- ===================== CONTEUDO ===================== -->
+        <Grid Grid.Column="2" RowDefinitions="Auto,8,*">
 
-        <!-- Cada linha e um Cliente vindo da Core -->
-        <DataGrid ItemsSource="{Binding Clientes}"
-                  IsReadOnly="True"
-                  AutoGenerateColumns="False"
-                  GridLinesVisibility="Horizontal">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="ID"       Width="60"  Binding="{Binding Id}" />
-                <DataGridTextColumn Header="Nome"     Width="*"   Binding="{Binding Nome}" />
-                <DataGridTextColumn Header="CPF"      Width="130" Binding="{Binding Cpf}" />
-                <DataGridTextColumn Header="E-mail"   Width="*"   Binding="{Binding Email}" />
-                <DataGridTextColumn Header="Telefone" Width="130" Binding="{Binding Telefone}" />
-                <DataGridTextColumn Header="Cadastro" Width="110" Binding="{Binding DataCadastro, StringFormat={}{0:dd/MM/yyyy}}" />
-            </DataGrid.Columns>
-        </DataGrid>
+            <!-- Barra do topo: titulo, busca e acoes -->
+            <Border Grid.Row="0" Background="{StaticResource Painel}"
+                    BorderBrush="{StaticResource Contorno}" BorderThickness="3" Padding="10,7">
+                <Grid ColumnDefinitions="Auto,*,Auto,8,Auto,8,Auto">
+                    <TextBlock Grid.Column="0" Text="CLIENTES" FontSize="32"
+                               Foreground="{StaticResource Texto}" VerticalAlignment="Center" />
 
-    </DockPanel>
+                    <TextBox Grid.Column="2" Width="220" Height="48"
+                             Watermark="Buscar nome ou CPF..."
+                             FontFamily="{StaticResource FontePixel}" FontSize="16"
+                             VerticalContentAlignment="Center"
+                             Background="{StaticResource PainelLuz}"
+                             Foreground="{StaticResource Texto}"
+                             BorderBrush="{StaticResource Contorno}" BorderThickness="3"
+                             CornerRadius="0" />
+
+                    <Button Grid.Column="4" Content="ATUALIZAR"
+                            Theme="{StaticResource BotaoNeutro}"
+                            Command="{Binding CarregarClientesCommand}" />
+
+                    <Button Grid.Column="6" Content="+ NOVO CLIENTE"
+                            Theme="{StaticResource BotaoVerde}" />
+                </Grid>
+            </Border>
+
+            <!-- Painel da lista -->
+            <Border Grid.Row="2" Background="{StaticResource Painel}"
+                    BorderBrush="{StaticResource Contorno}" BorderThickness="3">
+                <DockPanel>
+
+                    <Border DockPanel.Dock="Top" Background="{StaticResource Cabecalho}"
+                            BorderBrush="{StaticResource Contorno}" BorderThickness="0,0,0,3"
+                            Padding="10,5">
+                        <TextBlock Text="/CLIENTES/LISTA" Foreground="{StaticResource Texto}" />
+                    </Border>
+
+                    <Border DockPanel.Dock="Bottom" Background="{StaticResource Cabecalho}"
+                            BorderBrush="{StaticResource Contorno}" BorderThickness="0,3,0,0"
+                            Padding="10,6">
+                        <TextBlock Text="{Binding Status}" Foreground="{StaticResource TextoFraco}" />
+                    </Border>
+
+                    <!-- Cabecalho das colunas. As larguras aqui precisam ser
+                         iguais as da linha, la embaixo. -->
+                    <Border DockPanel.Dock="Top" Background="{StaticResource Cabecalho}"
+                            BorderBrush="{StaticResource Contorno}" BorderThickness="0,0,0,3"
+                            Padding="8,6">
+                        <Grid ColumnDefinitions="70,2*,170,3*,170,120,180">
+                            <TextBlock Grid.Column="0" Text="ID" Foreground="{StaticResource TextoFraco}" />
+                            <TextBlock Grid.Column="1" Text="NOME" Foreground="{StaticResource TextoFraco}" />
+                            <TextBlock Grid.Column="2" Text="CPF" Foreground="{StaticResource TextoFraco}" />
+                            <TextBlock Grid.Column="3" Text="E-MAIL" Foreground="{StaticResource TextoFraco}" />
+                            <TextBlock Grid.Column="4" Text="TELEFONE" Foreground="{StaticResource TextoFraco}" />
+                            <TextBlock Grid.Column="5" Text="CADASTRO" Foreground="{StaticResource TextoFraco}" />
+                            <TextBlock Grid.Column="6" Text="ACOES" Foreground="{StaticResource TextoFraco}" />
+                        </Grid>
+                    </Border>
+
+                    <ScrollViewer>
+                        <ItemsControl ItemsSource="{Binding Clientes}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="models:Cliente">
+                                    <Border BorderBrush="{StaticResource Linha}" BorderThickness="0,0,0,2"
+                                            Padding="8,5">
+                                        <Grid ColumnDefinitions="70,2*,170,3*,170,120,180">
+                                            <TextBlock Grid.Column="0" Text="{Binding Id}"
+                                                       Foreground="{StaticResource TextoFraco}"
+                                                       VerticalAlignment="Center" />
+                                            <TextBlock Grid.Column="1" Text="{Binding Nome}"
+                                                       Foreground="{StaticResource Texto}"
+                                                       VerticalAlignment="Center" />
+                                            <TextBlock Grid.Column="2" Text="{Binding Cpf}"
+                                                       Foreground="{StaticResource Texto}"
+                                                       VerticalAlignment="Center" />
+                                            <TextBlock Grid.Column="3" Text="{Binding Email}"
+                                                       Foreground="{StaticResource Etiqueta}"
+                                                       VerticalAlignment="Center" />
+                                            <TextBlock Grid.Column="4" Text="{Binding Telefone}"
+                                                       Foreground="{StaticResource Texto}"
+                                                       VerticalAlignment="Center" />
+                                            <TextBlock Grid.Column="5"
+                                                       Text="{Binding DataCadastro, StringFormat={}{0:dd/MM/yyyy}}"
+                                                       Foreground="{StaticResource Texto}"
+                                                       VerticalAlignment="Center" />
+                                            <StackPanel Grid.Column="6" Orientation="Horizontal" Spacing="6">
+                                                <Button Content="EDIT" Theme="{StaticResource BotaoLinhaNeutro}" />
+                                                <Button Content="DEL" Theme="{StaticResource BotaoLinhaVinho}" />
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+
+                </DockPanel>
+            </Border>
+        </Grid>
+    </Grid>
 </Window>

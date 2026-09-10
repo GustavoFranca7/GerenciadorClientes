@@ -1,0 +1,84 @@
+<!-- Aparencia dos botoes usando a arte em pixel art.
+     A arte tem 96x24 px e e cortada em 9 fatias, entao o botao pode ter
+     qualquer largura sem deformar os cantos. -->
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:ctl="using:GerenciadorClientes.Desktop.Controls">
+
+    <!-- Base comum aos tres botoes: o desenho do fundo fica atras do texto. -->
+    <ControlTheme x:Key="BotaoPixelBase" TargetType="Button">
+        <Setter Property="FontFamily" Value="{StaticResource FontePixel}" />
+        <Setter Property="FontSize" Value="16" />
+        <Setter Property="Foreground" Value="#EDEDED" />
+        <Setter Property="Padding" Value="18,0" />
+        <Setter Property="Height" Value="48" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Panel>
+                    <ctl:NineSlice Name="Fundo" Slice="8" Escala="2" />
+                    <ContentPresenter Content="{TemplateBinding Content}"
+                                      Padding="{TemplateBinding Padding}"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Center" />
+                </Panel>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+
+    <!-- Verde: acao principal (cadastrar, salvar). -->
+    <ControlTheme x:Key="BotaoVerde" TargetType="Button" BasedOn="{StaticResource BotaoPixelBase}">
+        <Style Selector="^ /template/ ctl|NineSlice#Fundo">
+            <Setter Property="Source" Value="/Assets/UI/botao-verde-normal.png"/>
+        </Style>
+        <Style Selector="^:pointerover /template/ ctl|NineSlice#Fundo">
+            <Setter Property="Source" Value="/Assets/UI/botao-verde-hover.png" />
+        </Style>
+        <Style Selector="^:pressed /template/ ctl|NineSlice#Fundo">
+            <Setter Property="Source" Value="/Assets/UI/botao-verde-press.png" />
+        </Style>
+    </ControlTheme>
+
+    <!-- Vinho: acao destrutiva (excluir). -->
+    <ControlTheme x:Key="BotaoVinho" TargetType="Button" BasedOn="{StaticResource BotaoPixelBase}">
+        <Style Selector="^ /template/ ctl|NineSlice#Fundo">
+            <Setter Property="Source" Value="/Assets/UI/botao-vinho-normal.png" />
+        </Style>
+        <Style Selector="^:pointerover /template/ ctl|NineSlice#Fundo">
+            <Setter Property="Source" Value="/Assets/UI/botao-vinho-hover.png" />
+        </Style>
+        <Style Selector="^:pressed /template/ ctl|NineSlice#Fundo">
+            <Setter Property="Source" Value="/Assets/UI/botao-vinho-press.png" />
+        </Style>
+    </ControlTheme>
+
+    <!-- Neutro: acoes secundarias. Fundo claro, entao o texto e escuro. -->
+    <ControlTheme x:Key="BotaoNeutro" TargetType="Button" BasedOn="{StaticResource BotaoPixelBase}">
+        <Setter Property="Foreground" Value="#05090F" />
+        <Style Selector="^ /template/ ctl|NineSlice#Fundo">
+            <Setter Property="Source" Value="/Assets/UI/botao-neutro-normal.png" />
+        </Style>
+        <Style Selector="^:pointerover /template/ ctl|NineSlice#Fundo">
+            <Setter Property="Source" Value="/Assets/UI/botao-neutro-hover.png" />
+        </Style>
+        <Style Selector="^:pressed /template/ ctl|NineSlice#Fundo">
+            <Setter Property="Source" Value="/Assets/UI/botao-neutro-press.png" />
+        </Style>
+    </ControlTheme>
+
+    <!-- Versao pequena, para as acoes de cada linha da tabela. -->
+    <ControlTheme x:Key="BotaoLinhaNeutro" TargetType="Button" BasedOn="{StaticResource BotaoNeutro}">
+        <Setter Property="Padding" Value="10,0" />
+        <Setter Property="Height" Value="32" />
+        <Setter Property="MinWidth" Value="80" />
+    </ControlTheme>
+
+    <ControlTheme x:Key="BotaoLinhaVinho" TargetType="Button" BasedOn="{StaticResource BotaoVinho}">
+        <Setter Property="Padding" Value="10,0" />
+        <Setter Property="Height" Value="32" />
+        <Setter Property="MinWidth" Value="80" />
+    </ControlTheme>
+
+</ResourceDictionary>

@@ -2,16 +2,23 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="GerenciadorClientes.Desktop.App"
              xmlns:local="using:GerenciadorClientes.Desktop"
-             RequestedThemeVariant="Default">
-             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
+             RequestedThemeVariant="Dark">
 
     <Application.DataTemplates>
         <local:ViewLocator />
     </Application.DataTemplates>
 
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <!-- Cores e fonte primeiro: o arquivo de botoes depende deles. -->
+                <ResourceInclude Source="/Styles/Tema.axaml" />
+                <ResourceInclude Source="/Styles/Botoes.axaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+
     <Application.Styles>
         <FluentTheme />
-        <!-- O DataGrid vem em pacote separado e traz o proprio tema. -->
-        <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml" />
     </Application.Styles>
 </Application>
